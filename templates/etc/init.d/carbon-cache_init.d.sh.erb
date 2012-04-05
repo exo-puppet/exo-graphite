@@ -1,0 +1,36 @@
+#! /bin/sh
+
+### BEGIN INIT INFO
+# Provides:          <%= scope.lookupvar('graphite::params::service_carbon_name') %>
+# Required-Start:    $local_fs $remote_fs
+# Required-Stop:
+# X-Start-Before:    
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Carbon-Cache daemon for Graphite
+### END INIT INFO
+
+N=<%= scope.lookupvar('graphite::params::services_scripts_dir') %>/<%= scope.lookupvar('graphite::params::service_carbon_name') %>
+
+set -e
+
+PID=<%= scope.lookupvar('graphite::params::install_dir') %>/storage/<%= scope.lookupvar('graphite::params::service_carbon_name') %>-a.pid
+
+
+case "$1" in
+  start)
+    <%= scope.lookupvar('graphite::params::install_dir') %>/bin/carbon-cache.py start
+    ;;
+  status)
+    <%= scope.lookupvar('graphite::params::install_dir') %>/bin/carbon-cache.py status
+    ;;
+  stop)
+    <%= scope.lookupvar('graphite::params::install_dir') %>/bin/carbon-cache.py stop
+    ;;
+  *)
+    echo "Usage: $N {start|stop|status}" >&2
+    exit 1
+    ;;
+esac
+
+exit 0

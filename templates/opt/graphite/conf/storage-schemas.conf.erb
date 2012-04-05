@@ -1,0 +1,41 @@
+################################################
+#      /!\ DON'T CHANGE THIS FILE /!\          #
+# this file is generated and managed by puppet #
+################################################
+# Schema definitions for whisper files. Entries are scanned in order,
+# and first match wins.
+#
+#  [name]
+#  pattern = regex
+#  retentions = timePerPoint:timeToStore, timePerPoint:timeToStore, ...
+
+# In whisper.py :
+# UnitMultipliers = {
+#   's' : 1,
+#   'm' : 60,
+#   'h' : 60 * 60,
+#   'd' : 60 * 60 * 24,
+#   'y' : 60 * 60 * 24 * 365,
+# }
+# example :
+#  [carbon_data]
+#  pattern = ^carbon\.
+#  retentions = 1m:7d,1h:30d
+#
+#  [default]
+#  pattern = .*
+#  retentions = 1s:7d,10s:30d,1m:1y
+#
+
+<%if scope.lookupvar('graphite::storage_rules').is_a? Array -%>
+<% scope.lookupvar('graphite::storage_rules').each do |rule| -%>
+[<%= rule['name'] %>]
+pattern = <%= rule['pattern'] %>
+retentions = <%= rule['retentions'] %>
+
+<% end -%>
+<% else -%>
+[default]
+pattern = .*
+retentions = 1s:7d,10s:30d,1m:1y
+<% end -%>
