@@ -31,6 +31,7 @@
 #   CONF_DIR       = /etc/carbon/
 #   LOG_DIR        = /var/log/carbon/
 #   PID_DIR        = /var/run/
+PID_DIR        = /var/run/<%= scope.lookupvar('graphite::params::service_carbon_name') %>
 #
 #LOCAL_DATA_DIR = /opt/graphite/storage/whisper/
 

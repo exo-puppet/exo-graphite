@@ -32,7 +32,7 @@ class graphite::params {
                 /(10.10)/: {
                     $python_version = "2.6"
                 }
-                /(11.04|11.10)/: {
+                /(11.04|11.10|12.04)/: {
                     $python_version = "2.7"
                 }
                 default: {
