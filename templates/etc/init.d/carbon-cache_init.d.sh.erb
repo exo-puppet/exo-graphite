@@ -16,13 +16,17 @@ DESC="Carbon-Cache"
 
 test -x $DAEMON || exit 0
 
-DIR=/var/run/<%= scope.lookupvar('graphite::params::service_carbon_name') %>
-PID=$DIR/$NAME.pid
+CARBON_CONFIG=<%= scope.lookupvar('graphite::carbon_conf_dir') %>/carbon.conf
+CARBON_LOG_DIR=<%= scope.lookupvar('graphite::carbon_log_dir') %>
+CARBON_PID=<%= scope.lookupvar('graphite::params::run_dir') %>/$NAME.pid
+
+CARBON_CMD="<%= scope.lookupvar('graphite::params::install_dir') %>/bin/carbon-cache.py --config=$CARBON_CONFIG --logdir=$CARBON_LOG_DIR --pidfile=$CARBON_PID"
+
 RETRY=15
 
-if test ! -d "$DIR"; then
-  mkdir "$DIR"
-  chown -R www-data:www-data "$DIR"
+if test ! -d "<%= scope.lookupvar('graphite::params::run_dir') %>"; then
+  mkdir "<%= scope.lookupvar('graphite::params::run_dir') %>"
+  chown -R <%= scope.lookupvar('graphite::params::carbon_data_user') %>:<%= scope.lookupvar('graphite::params::carbon_data_group') %> "<%= scope.lookupvar('graphite::params::run_dir') %>"
 fi
 
 export PATH="${PATH:+$PATH:}/usr/sbin:/sbin"
@@ -33,7 +37,7 @@ export PATH="${PATH:+$PATH:}/usr/sbin:/sbin"
 case "$1" in
   start)
     log_daemon_msg "Starting $DESC" "$NAME"
-    <%= scope.lookupvar('graphite::params::install_dir') %>/bin/carbon-cache.py --pidfile $PID start
+    $CARBON_CMD start
     case "$?" in
         0) log_end_msg 0 ;;
         *) log_end_msg 1; exit 1 ;;
@@ -41,14 +45,14 @@ case "$1" in
         ;;
   stop)
     log_daemon_msg "Stopping $DESC" "$NAME"
-    <%= scope.lookupvar('graphite::params::install_dir') %>/bin/carbon-cache.py --pidfile $PID stop
+      $CARBON_CMD stop
     case "$?" in
         0) log_end_msg 0 ;;
         *) log_end_msg 1; exit 1 ;;
     esac
         ;;
   status)
-    /opt/graphite/bin/carbon-cache.py --pidfile $PID status
+      $CARBON_CMD status
     case "$?" in
       0) log_end_msg 0 ;;
       *) log_end_msg 1; exit 1 ;;

@@ -3,11 +3,65 @@
 # This class manage the graphite configuration
 class graphite::config {
     
+    #########################################
+    # Create all needed directories    
+    #########################################    
+    # Create carbon config directory
+    file {$graphite::carbon_conf_dir:
+        ensure  => directory,
+        owner   => root,
+        group   => root,
+    } ->
+    # Create carbon whitelists directory
+    file {$graphite::params::carbon_lists_dir:
+        ensure  => directory,
+        owner   => root,
+        group   => root,
+    } ->
+    # Create carbon data directory
+    file {$graphite::carbon_data_dir:
+        ensure  => directory,
+        owner   => $graphite::params::carbon_data_user,
+        group   => $graphite::params::carbon_data_group,
+    } ->
+    # Create carbon local data directory
+    file {$graphite::params::carbon_local_data_dir:
+        ensure  => directory,
+        owner   => $graphite::params::carbon_data_user,
+        group   => $graphite::params::carbon_data_group,
+    } ->
+    # Create a symlink between Carbon data directory and the place where Graphite Web think the data are stored 
+    file {$graphite::params::graphite_data_dir:
+        ensure  => link,
+        target  => $graphite::params::carbon_local_data_dir,
+        force   => true,
+    } ->
+    # Create carbon log directory
+    file {$graphite::carbon_log_dir:
+        ensure  => directory,
+        owner   => $graphite::params::carbon_data_user,
+        group   => $graphite::params::carbon_data_group,
+    } ->
+    # Create carbon run directory
+    file {$graphite::params::run_dir:
+        ensure  => directory,
+        owner   => $graphite::params::carbon_data_user,
+        group   => $graphite::params::carbon_data_group,
+    } ->
+    # Create graphit configuration directory
+    file {$graphite::graphite_conf_dir:
+        ensure  => directory,
+        owner   => root,
+        group   => root,
+    } ->
+    #########################################
+    # Carbon configuration    
+    #########################################    
     file { "carbon.conf":
         ensure  => file,
         owner   => root,
         group   => root,
-        path    => "${graphite::params::install_dir}/conf/carbon.conf",
+        path    => "${graphite::carbon_conf_dir}/carbon.conf",
         content => template ("graphite/opt/graphite/conf/carbon.conf.erb"),
         mode    => 644,
         require => Class [ "graphite::params", "graphite::install" ],
@@ -17,7 +71,7 @@ class graphite::config {
         ensure  => file,
         owner   => root,
         group   => root,
-        path    => "${graphite::params::install_dir}/conf/storage-schemas.conf",
+        path    => "${graphite::carbon_conf_dir}/storage-schemas.conf",
         content => template ("graphite/opt/graphite/conf/storage-schemas.conf.erb"),
         mode    => 644,
         require => Class [ "graphite::params", "graphite::install" ],
@@ -28,7 +82,7 @@ class graphite::config {
         ensure  => file,
         owner   => root,
         group   => root,
-        path    => "${graphite::params::install_dir}/conf/aggregation-rules.conf",
+        path    => "${graphite::carbon_conf_dir}/aggregation-rules.conf",
         content => template ("graphite/opt/graphite/conf/aggregation-rules.conf.erb"),
         mode    => 644,
         require => Class [ "graphite::params", "graphite::install" ],
@@ -46,12 +100,6 @@ class graphite::config {
         mode    => 644,
         require => Class [ "graphite::params", "graphite::install" ],
     } ->
-    file { "${graphite::params::apache_conf_dir}":
-        ensure  => directory,
-        owner   => root,
-        group   => root,
-        mode    => 644,
-    } ->
     file { "apache-graphite.conf":
         ensure  => file,
         owner   => root,
@@ -62,11 +110,21 @@ class graphite::config {
         require => Class [ "graphite::params", "graphite::install" ],
         notify  => Class [ "apache2::service" ]
     } ->
+    file { "apache-graphite-ssl.conf":
+        ensure  => file,
+        owner   => root,
+        group   => root,
+        path    => "${graphite::params::apache_include_confssl_file}",
+        content => template ("graphite/opt/graphite/apache/graphite-ssl.conf.erb"),
+        mode    => 644,
+        require => Class [ "graphite::params", "graphite::install" ],
+        notify  => Class [ "apache2::service" ]
+    } ->
     file { "apache-graphite.wsgi":
         ensure  => file,
         owner   => root,
         group   => root,
-        path    => "${graphite::params::apache_conf_dir}/graphite.wsgi",
+        path    => "${graphite::params::apache_graphite_wsgi_file}",
         content => template ("graphite/opt/graphite/apache/graphite.wsgi.erb"),
         mode    => 644,
         require => Class [ "graphite::params", "graphite::install" ],
