@@ -110,6 +110,11 @@ class graphite (
     ],
   $aggregation_rules     = [
     ]) {
+
+  # modules dependencies
+  include repo
+
+  # internal classes
   include graphite::params, graphite::install, graphite::config, graphite::service
 
 }

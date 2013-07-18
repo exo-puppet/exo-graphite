@@ -89,9 +89,13 @@ class graphite::install {
   } -> ##############################
        # Install all required packages
        ##############################
-  package { $graphite::params::packages: ensure => present, } -> ##############################
-                                                                 # python-txamqp download and Install
-                                                                 ##############################
+  package { $graphite::params::packages:
+    ensure  => present,
+    require => [
+      Exec['repo-update'],],
+  } -> ##############################
+  # python-txamqp download and Install
+  ##############################
   wget::fetch { 'download-python-txamqp':
     source_url       => "http://launchpad.net/txamqp/trunk/${graphite::params::python_txamqp_version}/+download/python-txamqp_${graphite::params::python_txamqp_version}.orig.tar.gz",
     target_directory => "${graphite::params::tempdir4install}/graphite-web-${graphite::params::graphite_version}",
