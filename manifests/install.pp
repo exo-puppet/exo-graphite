@@ -142,8 +142,8 @@ class graphite::install {
     mode    => 754,
     require => Class['graphite::params'],
   } -> exec { 'graphite-carbon-service-install':
-    command => "update-rc.d ${graphite::params::service_carbon_name} defaults",
+    command => "/usr/sbin/update-rc.d ${graphite::params::service_carbon_name} defaults",
     #        unless     => "initctl list | grep \"${graphite::params::service_carbon_name}\" "
-    unless  => "service --status-all | grep \"${graphite::params::service_carbon_name}\" "
+    unless  => "/usr/sbin/service --status-all &> /dev/stdout | grep \"${graphite::params::service_carbon_name}\" "
   }
 }
