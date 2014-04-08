@@ -23,6 +23,8 @@ class graphite::params {
       $apache_graphite_wsgi_file   = "${graphite::graphite_conf_dir}/graphite.wsgi"
 
       $packages                    = [
+        'python-pip',
+        'python-dev',
         'python-django',
         'python-django-tagging',
         'python-memcache',
@@ -36,12 +38,6 @@ class graphite::params {
         'python-ldap']
 
       $graphite_data_dir           = "${install_dir}/storage/whisper"
-      $graphite_download_base_url  = 'http://launchpad.net/graphite/0.9'
-      $whisper_version             = '0.9.10'
-      $carbon_version              = '0.9.10'
-      $graphite_version            = '0.9.10'
-      $python_txamqp_version       = '0.3'
-
       # python version
       case $::lsbdistrelease {
         /(10.04)/             : {

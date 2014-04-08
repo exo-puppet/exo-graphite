@@ -45,15 +45,16 @@ class graphite::config {
     ensure => directory,
     owner  => root,
     group  => root,
-  } -> #########################################
-       # Carbon configuration
-       #########################################
+  } ->
+  #########################################
+  # Carbon configuration
+  #########################################
   file { 'carbon.conf':
     ensure  => file,
     owner   => root,
     group   => root,
     path    => "${graphite::carbon_conf_dir}/carbon.conf",
-    content => template('graphite/opt/graphite/conf/carbon.conf.erb'),
+    content => template("graphite/opt/graphite/conf/carbon.conf-${graphite::version}.erb"),
     mode    => 644,
     require => Class['graphite::params', 'graphite::install'],
   } -> file { 'storage-schemas.conf':
@@ -61,7 +62,7 @@ class graphite::config {
     owner   => root,
     group   => root,
     path    => "${graphite::carbon_conf_dir}/storage-schemas.conf",
-    content => template('graphite/opt/graphite/conf/storage-schemas.conf.erb'),
+    content => template("graphite/opt/graphite/conf/storage-schemas.conf-${graphite::version}.erb"),
     mode    => 644,
     require => Class['graphite::params', 'graphite::install'],
     notify  => Class['graphite::service'],
@@ -70,18 +71,19 @@ class graphite::config {
     owner   => root,
     group   => root,
     path    => "${graphite::carbon_conf_dir}/aggregation-rules.conf",
-    content => template('graphite/opt/graphite/conf/aggregation-rules.conf.erb'),
+    content => template("graphite/opt/graphite/conf/aggregation-rules.conf-${graphite::version}.erb"),
     mode    => 644,
     require => Class['graphite::params', 'graphite::install'],
-  } -> #########################################
-       # Apache configuration files
-       #########################################
+  } ->
+  #########################################
+  # Apache configuration files
+  #########################################
   file { 'graphite_local_settings.py':
     ensure  => file,
     owner   => root,
     group   => root,
     path    => "${graphite::params::install_dir}/webapp/graphite/local_settings.py",
-    content => template('graphite/opt/graphite/webapp/graphite/local_settings.py.erb'),
+    content => template("graphite/opt/graphite/webapp/graphite/local_settings.py-${graphite::version}.erb"),
     mode    => 644,
     require => Class['graphite::params', 'graphite::install'],
   } -> file { 'apache-graphite.conf':

@@ -94,14 +94,16 @@
 #
 ################################################################################
 class graphite (
-  $graphite_conf_dir     = '/etc/graphite',
-  $graphite_time_zone    = 'Europe/Paris',
-  $carbon_receiver_port  = 2003,
-  $carbon_max_cache_size = 'inf',
-  $carbon_data_dir       = '/var/lib/carbon',
-  $carbon_conf_dir       = '/etc/carbon',
-  $carbon_log_dir        = '/var/log/carbon',
-  $storage_rules         = [
+  $version                = '0.9.12',
+  $graphite_install_dir   = '/opt/graphite',
+  $graphite_conf_dir      = '/etc/graphite',
+  $graphite_time_zone     = 'Europe/Paris',
+  $carbon_receiver_port   = 2003,
+  $carbon_max_cache_size  = 'inf',
+  $carbon_data_dir        = '/var/lib/carbon',
+  $carbon_conf_dir        = '/etc/carbon',
+  $carbon_log_dir         = '/var/log/carbon',
+  $storage_rules          = [
     {
       name       => 'default',
       pattern    => '.*',
