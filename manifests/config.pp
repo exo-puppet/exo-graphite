@@ -76,7 +76,7 @@ class graphite::config {
     require => Class['graphite::params', 'graphite::install'],
   } ->
   #########################################
-  # Apache configuration files
+  # Graphite configuration files
   #########################################
   file { 'graphite_local_settings.py':
     ensure  => file,
@@ -86,7 +86,32 @@ class graphite::config {
     content => template("graphite/opt/graphite/webapp/graphite/local_settings.py-${graphite::version}.erb"),
     mode    => 644,
     require => Class['graphite::params', 'graphite::install'],
-  } -> file { 'apache-graphite.conf':
+    notify  => Class['apache2::service']
+  } ->
+  file { 'graphTemplates.conf':
+    ensure  => file,
+    owner   => root,
+    group   => root,
+    path    => "${graphite::graphite_conf_dir}/graphTemplates.conf",
+    content => template("graphite/opt/graphite/conf/graphTemplates.conf-${graphite::version}.erb"),
+    mode    => 644,
+    require => Class['graphite::params', 'graphite::install'],
+    notify  => Class['apache2::service']
+  } ->
+  file { 'dashboard.conf':
+    ensure  => file,
+    owner   => root,
+    group   => root,
+    path    => "${graphite::graphite_conf_dir}/dashboard.conf",
+    content => template("graphite/opt/graphite/conf/dashboard.conf-${graphite::version}.erb"),
+    mode    => 644,
+    require => Class['graphite::params', 'graphite::install'],
+    notify  => Class['apache2::service']
+  } ->
+  #########################################
+  # Apache configuration files
+  #########################################
+  file { 'apache-graphite.conf':
     ensure  => file,
     owner   => root,
     group   => root,

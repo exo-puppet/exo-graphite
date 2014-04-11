@@ -14,7 +14,7 @@
 # install. This key is used for salting of hashes used in auth tokens,
 # CRSF middleware, cookie storage, etc. This should be set identically among
 # instances if used behind a load balancer.
-#SECRET_KEY = 'UNSAFE_DEFAULT'
+SECRET_KEY = '<%= scope.lookupvar('graphite::graphite_secret_key') %>'
 
 # In Django 1.5+ set this to the list of hosts your graphite instances is
 # accessible as. See:
@@ -71,8 +71,8 @@ CONF_DIR = '<%= scope.lookupvar('graphite::graphite_conf_dir') %>'
 # default settings for each of these are relative to CONF_DIR and STORAGE_DIR
 #
 ## Webapp config files
-#DASHBOARD_CONF = '/opt/graphite/conf/dashboard.conf'
-#GRAPHTEMPLATES_CONF = '/opt/graphite/conf/graphTemplates.conf'
+DASHBOARD_CONF = '<%= scope.lookupvar('graphite::graphite_conf_dir') %>/dashboard.conf'
+GRAPHTEMPLATES_CONF = '<%= scope.lookupvar('graphite::graphite_conf_dir') %>/graphTemplates.conf'
 
 ## Data directories
 # NOTE: If any directory is unreadable in DATA_DIRS it will break metric browsing
@@ -88,9 +88,9 @@ CONF_DIR = '<%= scope.lookupvar('graphite::graphite_conf_dir') %>'
 #####################################
 # This is used for emailing rendered Graphs
 # Default backend is SMTP
-#EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-#EMAIL_HOST = 'localhost'
-#EMAIL_PORT = 25
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'localhost'
+EMAIL_PORT = 25
 #EMAIL_HOST_USER = ''
 #EMAIL_HOST_PASSWORD = ''
 #EMAIL_USE_TLS = False

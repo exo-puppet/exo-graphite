@@ -98,6 +98,7 @@ class graphite (
   $graphite_install_dir   = '/opt/graphite',
   $graphite_conf_dir      = '/etc/graphite',
   $graphite_time_zone     = 'Europe/Paris',
+  $graphite_secret_key    = 'graphite_secret_key',
   $carbon_receiver_port   = 2003,
   $carbon_max_cache_size  = 'inf',
   $carbon_data_dir        = '/var/lib/carbon',
@@ -107,7 +108,7 @@ class graphite (
     {
       name       => 'default',
       pattern    => '.*',
-      retentions => '1s:7d,10s:30d,1m:1y'
+      retentions => '1s:1d,1m:7d,5m:30d,1h:1y'
     }
     ],
   $aggregation_rules     = [
