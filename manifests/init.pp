@@ -115,7 +115,7 @@ class graphite (
     ]) {
 
   # modules dependencies
-  include repo
+  include stdlib
 
   # internal classes
   include graphite::params, graphite::install, graphite::config, graphite::service

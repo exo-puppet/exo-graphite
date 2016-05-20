@@ -51,11 +51,8 @@ class graphite::install {
   ##############################
   # Install all required packages
   ##############################
-  package { $graphite::params::packages:
-    ensure  => present,
-    require => [
-      Exec['repo-update'],],
-  } ->
+  ensure_packages ($graphite::params::packages)
+
   ##############################
   # Graphite database initialization and ownership
   ##############################
@@ -64,6 +61,7 @@ class graphite::install {
     owner   => root,
     group   => www-data,
     mode    => 644,
+    require => Package[$graphite::params::packages]
   } ->
   file {[
     "${graphite::params::install_dir}/storage",
@@ -74,28 +72,16 @@ class graphite::install {
     group   => www-data,
     mode    => 644,
     recurse => true,
-  } ->
+  }
   ##############################
-  # Whisper Install
+  # Whisper + Carbon + Graphite Web packages Install
   ##############################
-  package {'whisper':
-    ensure    => $graphite::version,
-    provider  =>pip,
-  } ->
-  ##############################
-  # Carbon Install
-  ##############################
-  package {'carbon':
-    ensure    => $graphite::version,
-    provider  =>pip,
-  } ->
-  ##############################
-  # Graphite Web Install
-  ##############################
-  package {'graphite-web':
-    ensure    => $graphite::version,
-    provider  =>pip,
-  } ->
+  ensure_packages (['whisper', 'carbon', 'graphite-web'], {
+    'ensure'   => $graphite::version,
+    'provider' => 'pip',
+    'require'  => File["${graphite::params::install_dir}/storage/log/webapp"]
+  })
+
   ##############################
   # Graphite database initialization and ownership
   ##############################
@@ -104,6 +90,7 @@ class graphite::install {
     # don't do anything if the graphite.db file exists and is non empty
     unless  => "test -s ${graphite::params::install_dir}/storage/graphite.db",
     cwd     => "${graphite::params::install_dir}/webapp/graphite",
+    require => Package['whisper', 'carbon', 'graphite-web']
   } ->
   ##############################
   # Carbon service script install
